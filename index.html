@@ -1,0 +1,232 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#635bff">
+  <title>QuizSprint — Learn. Play. Improve.</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://npmcdn.com/parse/dist/parse.min.js"></script>
+  <script src="main.js" defer></script>
+</head>
+<body>
+  <div id="toast" class="toast" role="status"></div>
+
+  <header class="topbar">
+    <a class="brand" href="#" data-page="home">⚡ QuizSprint</a>
+    <div class="header-actions">
+      <span id="connectionStatus" class="status">Demo mode</span>
+      <button id="languageButton" class="icon-btn">🌐 EN</button>
+      <button id="themeButton" class="icon-btn">🌙</button>
+      <span id="userDisplay">Guest</span>
+      <button id="logoutButton" class="btn secondary hidden">Log out</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside id="sidebar" class="sidebar">
+      <button class="nav active" data-page="home">🏠 Home</button>
+      <button class="nav" data-page="study">📚 Study</button>
+      <button class="nav" data-page="quizzes">📝 Quizzes</button>
+      <button class="nav" data-page="classes">🏫 Classes</button>
+      <button class="nav" data-page="leaderboard">🏆 Leaderboard</button>
+      <button class="nav" data-page="profile">👤 Profile</button>
+      <button class="nav teacher-only hidden" data-page="teacher">👩‍🏫 Teacher Center</button>
+    </aside>
+
+    <main class="main">
+      <section id="authPage" class="auth-wrap">
+        <div class="auth-card">
+          <div class="big-logo">⚡</div>
+          <h1 id="authTitle">Welcome to QuizSprint!</h1>
+          <p class="muted">Learn. Play. Improve.</p>
+
+          <div class="tabs">
+            <button id="loginTab" class="tab active">Log in</button>
+            <button id="signupTab" class="tab">Create account</button>
+          </div>
+
+          <form id="authForm">
+            <label>Username
+              <input id="authUsername" required minlength="3" maxlength="24"
+                autocomplete="username" placeholder="Your username">
+            </label>
+            <label>Password
+              <input id="authPassword" required minlength="6"
+                type="password" autocomplete="current-password"
+                placeholder="At least 6 characters">
+            </label>
+            <label id="roleLabel" class="hidden">Account type
+              <select id="authRole">
+                <option value="student">Student</option>
+                <option value="teacher">Teacher</option>
+              </select>
+            </label>
+            <button id="authSubmit" class="btn primary full" type="submit">Log in</button>
+          </form>
+          <p id="authMessage" class="muted small"></p>
+          <p class="small muted">Demo mode stores demo accounts in this browser only.</p>
+        </div>
+      </section>
+
+      <div id="app" class="hidden">
+        <section id="page-home" class="page">
+          <div class="hero">
+            <div>
+              <p class="eyebrow">YOUR LEARNING JOURNEY</p>
+              <h1 id="welcomeTitle">Ready to sprint? ⚡</h1>
+              <p>Learn something new, complete quizzes, and earn SprintPoints.</p>
+              <button class="btn light" data-page="quizzes">Explore quizzes →</button>
+            </div>
+            <div class="hero-icon">🚀</div>
+          </div>
+
+          <div class="stats-grid">
+            <article class="stat-card"><span>⚡ SprintPoints</span><strong id="statPoints">0</strong></article>
+            <article class="stat-card"><span>🔥 Daily streak</span><strong id="statStreak">0 days</strong></article>
+            <article class="stat-card"><span>⏱️ Time learned</span><strong id="statTime">0 min</strong></article>
+            <article class="stat-card"><span>🏫 Classes</span><strong id="statClasses">0</strong></article>
+          </div>
+
+          <div class="section-heading"><h2>Continue learning</h2><button class="text-btn" data-page="quizzes">View all →</button></div>
+          <div id="homeQuizzes" class="quiz-grid"></div>
+
+          <div class="section-heading"><h2>Your achievements</h2></div>
+          <div id="homeAchievements" class="achievement-grid"></div>
+        </section>
+
+        <section id="page-study" class="page hidden">
+          <div class="page-heading">
+            <div><p class="eyebrow">KẾT NỐI TRI THỨC</p><h1>📚 Study</h1>
+            <p class="muted">Choose a grade and subject to find learning resources.</p></div>
+          </div>
+          <div class="filters">
+            <label>Grade
+              <select id="studyGrade"></select>
+            </label>
+            <label>Subject
+              <select id="studySubject">
+                <option value="all">All subjects</option>
+                <option value="Math">Mathematics / Toán</option>
+                <option value="Vietnamese">Vietnamese / Tiếng Việt</option>
+                <option value="Science">Science / Khoa học</option>
+                <option value="History">History & Geography / Lịch sử và Địa lí</option>
+                <option value="English">English / Tiếng Anh</option>
+              </select>
+            </label>
+          </div>
+          <div id="studyContent" class="quiz-grid"></div>
+          <p class="muted small">These are starter activities, not a complete copy of official Kết Nối Tri Thức textbooks. Add verified curriculum links and your own materials as needed.</p>
+        </section>
+
+        <section id="page-quizzes" class="page hidden">
+          <div class="page-heading">
+            <div><h1>📝 Quizzes</h1><p class="muted">Practice, learn, and collect SprintPoints.</p></div>
+            <button class="btn primary teacher-only hidden" data-page="teacher">＋ Create quiz</button>
+          </div>
+          <div class="filters">
+            <input id="quizSearch" placeholder="Search quizzes..." aria-label="Search quizzes">
+            <select id="quizSubjectFilter">
+              <option value="all">All subjects</option>
+              <option value="Math">Mathematics</option>
+              <option value="Vietnamese">Vietnamese</option>
+              <option value="Science">Science</option>
+              <option value="History">History & Geography</option>
+              <option value="English">English</option>
+              <option value="Programming">Programming</option>
+            </select>
+          </div>
+          <div id="quizList" class="quiz-grid"></div>
+        </section>
+
+        <section id="page-classes" class="page hidden">
+          <div class="page-heading"><div><h1>🏫 Classes</h1><p class="muted">Join a class or manage your students.</p></div></div>
+          <div class="panel">
+            <h2>Join a class</h2>
+            <form id="joinClassForm" class="inline-form">
+              <input id="joinCode" placeholder="Enter class join code" maxlength="12" required>
+              <button class="btn primary">Join class</button>
+            </form>
+          </div>
+          <div class="panel">
+            <h2>Your classes</h2>
+            <div id="classList"></div>
+          </div>
+          <div class="panel teacher-only hidden">
+            <h2>Create a class</h2>
+            <form id="createClassForm" class="inline-form">
+              <input id="newClassName" placeholder="Class name" maxlength="60" required>
+              <button class="btn primary">Create class</button>
+            </form>
+          </div>
+        </section>
+
+        <section id="page-leaderboard" class="page hidden">
+          <div class="page-heading"><div><h1>🏆 Leaderboard</h1><p class="muted">Only student accounts appear here.</p></div></div>
+          <div class="panel">
+            <div id="leaderboardList"></div>
+          </div>
+        </section>
+
+        <section id="page-profile" class="page hidden">
+          <div class="page-heading"><div><h1>👤 Profile</h1><p class="muted">Your QuizSprint progress.</p></div></div>
+          <div id="profileContent" class="panel"></div>
+        </section>
+
+        <section id="page-teacher" class="page hidden">
+          <div class="page-heading"><div><h1>👩‍🏫 Teacher Center</h1><p class="muted">Create quizzes, manage classes, and review scores.</p></div></div>
+
+          <div class="panel">
+            <h2>Create a quiz</h2>
+            <form id="createQuizForm" class="form-grid">
+              <label>Quiz title<input id="newQuizTitle" required maxlength="100"></label>
+              <label>Subject
+                <select id="newQuizSubject">
+                  <option value="Math">Mathematics</option>
+                  <option value="Vietnamese">Vietnamese</option>
+                  <option value="Science">Science</option>
+                  <option value="History">History & Geography</option>
+                  <option value="English">English</option>
+                  <option value="Programming">Programming</option>
+                </select>
+              </label>
+              <label>Grade
+                <select id="newQuizGrade">
+                  <option value="all">All grades</option>
+                  <option>1</option><option>2</option><option>3</option>
+                  <option>4</option><option>5</option><option>6</option>
+                  <option>7</option><option>8</option><option>9</option>
+                  <option>10</option><option>11</option><option>12</option>
+                </select>
+              </label>
+              <label>Assign to class
+                <select id="assignClass"><option value="">No class assignment</option></select>
+              </label>
+              <div id="questionBuilder" class="question-builder"></div>
+              <button id="addQuestionButton" type="button" class="btn secondary">＋ Add question</button>
+              <button class="btn primary" type="submit">Publish quiz</button>
+            </form>
+          </div>
+
+          <div class="panel">
+            <h2>Manage your classes</h2>
+            <div id="teacherClassList"></div>
+          </div>
+          <div class="panel">
+            <h2>Quiz scores</h2>
+            <div id="teacherScores"></div>
+          </div>
+        </section>
+
+        <section id="page-take-quiz" class="page hidden">
+          <button class="text-btn" data-page="quizzes">← Back to quizzes</button>
+          <div id="takeQuizContent" class="panel"></div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <footer>⚡ QuizSprint · Learn. Play. Improve.</footer>
+</body>
+</html>
